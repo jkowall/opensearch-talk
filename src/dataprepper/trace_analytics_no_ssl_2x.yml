@@ -1,0 +1,99 @@
+entry-pipeline:
+  delay: "100"
+  source:
+    otel_trace_source:
+      port: 21890
+      ssl: false
+      authentication:
+        unauthenticated:
+  sink:
+    - pipeline:
+        name: "raw-pipeline"
+    - pipeline:
+        name: "service-map-pipeline"
+raw-pipeline:
+  source:
+    pipeline:
+      name: "entry-pipeline"
+  processor:
+    - otel_traces:
+  sink:
+    - opensearch:
+        hosts: ["https://opensearch-node1:9200"]
+        insecure: true
+        username: "admin"
+        password: "my_%New%_passW0rd!@#"
+        index_type: trace-analytics-raw
+service-map-pipeline:
+  delay: "100"
+  source:
+    pipeline:
+      name: "entry-pipeline"
+  processor:
+    - service_map:
+  sink:
+    - opensearch:
+        hosts: ["https://opensearch-node1:9200"]
+        insecure: true
+        username: "admin"
+        password: "my_%New%_passW0rd!@#"
+        index_type: trace-analytics-service-map
+trace-error-metrics-pipeline:
+  source:
+    pipeline:
+      name: "raw-pipeline"
+  processor:
+    - aggregate:
+        identification_keys: ["serviceName", "traceId"]
+        action:
+          count:
+        group_duration: "20s"
+        aggregate_when: "/status_code == 2"
+  sink:
+    - opensearch:
+        hosts: ["https://opensearch-node1:9200"]
+        insecure: true
+        username: "admin"
+        password: "my_%New%_passW0rd!@#"
+        index: trace-error-metrics
+trace-high-latency-metrics-pipeline:
+  source:
+    pipeline:
+      name: "raw-pipeline"
+  processor:
+    - aggregate:
+        identification_keys: ["serviceName", "traceId"]
+        action:
+          histogram:
+            key: "durationInNaos"
+            record_minmax: true
+            units: "nanoseconds"
+            buckets: [1000000000, 1500000000, 2000000000]
+        group_duration: "20s"
+        aggregate_when: "/durationInNanos > 1000000000"
+  sink:
+    - opensearch:
+        hosts: ["https://opensearch-node1:9200"]
+        insecure: true
+        username: "admin"
+        password: "my_%New%_passW0rd!@#"
+        index: trace-high-latency-metrics
+trace-normal-pipeline:
+  source:
+    pipeline:
+      name: "raw-pipeline"
+  processor:
+    - aggregate:
+        identification_keys: ["serviceName"]
+        action:
+          percent_sampler:
+            percent: 60
+        group_duration: "30s"
+        aggregate_when: "/status_code != 2 and /durationInNanos <= 1000000000"
+  sink:
+    - opensearch:
+        hosts: ["https://opensearch-node1:9200"]
+        insecure: true
+        username: "admin"
+        password: "my_%New%_passW0rd!@#"
+        index: sampled-traces

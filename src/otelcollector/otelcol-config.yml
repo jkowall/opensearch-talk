@@ -1,0 +1,98 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+extensions:
+  basicauth/client:
+    client_auth:
+      username: admin
+      password: my_%New%_passW0rd!@#
+
+receivers:
+  otlp:
+    protocols:
+      grpc:
+      http:
+        cors:
+          allowed_origins:
+            - "http://*"
+            - "https://*"
+
+exporters:
+  logging:
+    loglevel: info
+  debug:
+  otlp:
+    endpoint: "jaeger:4317"
+    tls:
+      insecure: true
+      insecure_skip_verify: true
+  opensearch/traces:
+    http:
+      endpoint: https://opensearch-node2:9200
+      auth:
+        authenticator: basicauth/client
+      tls:
+        insecure: false
+        insecure_skip_verify: true
+    timeout:
+    retry_on_failure:
+      enabled: true
+      initial_interval: 100000000
+      randomization_factor: 0.5
+    dataset: traces
+  opensearch/logs:
+    http:
+      endpoint: https://opensearch-node2:9200
+      auth:
+        authenticator: basicauth/client
+      tls:
+        insecure: false
+        insecure_skip_verify: true
+    timeout:
+    retry_on_failure:
+      enabled: true
+      initial_interval: 100000000
+      randomization_factor: 0.5
+    dataset: logs
+  otlp/traces:
+    endpoint: "data-prepper:21890"
+    tls:
+      insecure: true
+      insecure_skip_verify: true
+  otlp/metrics:
+    endpoint: "data-prepper:21891"
+    tls:
+      insecure: true
+      insecure_skip_verify: true
+  otlp/logs:
+    endpoint: "data-prepper:21892"
+    tls:
+      insecure: true
+      insecure_skip_verify: true
+  prometheusremotewrite:
+    endpoint: "http://prometheus:3000/api/v1/write"
+    target_info:
+       enabled: true
+
+processors:
+  batch:
+
+connectors:
+  spanmetrics:
+    dimensions_cache_size: 1000
+    metrics_flush_interval: 15s
+
+service:
+  extensions: [basicauth/client]
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlp, debug, spanmetrics, otlp/traces, opensearch/traces]
+    metrics:
+      receivers: [otlp, spanmetrics]
+      processors: [batch]
+      exporters: [prometheusremotewrite, otlp/metrics, debug]
+    logs:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlp/logs,  opensearch/logs, debug]
