@@ -2,6 +2,8 @@
 
 Here are the source files for the talk if you are interested. You'll need Docker but that's about it.
 
+The [slides from the talk](https://docs.google.com/presentation/d/1p7WQU7mr_r8eZacuRsqkiNSWl5uYGjbg/edit?usp=sharing&ouid=112537560294655090119&rtpof=true&sd=true) are available for your perusal. 
+
 ## Housekeeping
 
 Setup the following hosts on your local machine
