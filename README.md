@@ -24,7 +24,6 @@ Grafana to show the trace query to Jaeger : http://localhost:3000/grafana
 Based on [https://opentelemetry.io/docs/demo/architecture/](https://opentelemetry.io/docs/demo/architecture/) thanks to [Yang DB](https://github.com/YANG-DB) for the work. I have modified it as per below:
 
 ```mermaid
-Observability Stack
 graph LR
 subgraph tdf[Telemetry Data Flow]
   subgraph subgraph_padding [ ]
