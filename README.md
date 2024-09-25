@@ -11,18 +11,20 @@ Setup the following hosts on your local machine
 127.0.0.1 loadgenerator ngnix frontend dashboards featureflag Grafana jaeger
 
 ## URLs for testing
-URLs
-APP : http://frontend:8080/
-Loadgen : http://loadgenerator:8089/
-Jaeger UI : http://localhost:16686
-OpenSearch Dash : http://dashboards:5601/app/observability-traces#/traces
-  Default login for OpenSearch Dashboards : admin / my_%New%_passW0rd!@#
-Grafana to show the trace query to Jaeger : http://localhost:3000/grafana
+### URLs
+* APP : http://frontend:8080/
+* Loadgen : http://loadgenerator:8089/
+* Jaeger UI : http://localhost:16686
+* OpenSearch Dash : http://dashboards:5601/app/observability-traces#/traces
+  * (Default login for OpenSearch Dashboards : admin / my_%New%_passW0rd!@#)
+* Grafana to show the trace query to Jaeger : http://localhost:3000/grafana
 
 ## More Details
 
-Based on [https://opentelemetry.io/docs/demo/architecture/](https://opentelemetry.io/docs/demo/architecture/) thanks to [Yang DB](https://github.com/YANG-DB) for the work. I have modified it as per below:
+Based on [https://opentelemetry.io/docs/demo/architecture/](https://opentelemetry.io/docs/demo/architecture/) 
+Thanks to [Yang DB](https://github.com/YANG-DB) for the work. 
 
+This has been modified per the diagram below:
 ```mermaid
 graph LR
 subgraph tdf[Telemetry Data Flow]
