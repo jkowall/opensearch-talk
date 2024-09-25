@@ -16,6 +16,7 @@ APP : http://frontend:8080/
 Loadgen : http://loadgenerator:8089/
 Jaeger UI : http://localhost:16686
 OpenSearch Dash : http://dashboards:5601/app/observability-traces#/traces
+  Default login for OpenSearch Dashboards : admin / my_%New%_passW0rd!@#
 Grafana to show the trace query to Jaeger : http://localhost:3000/grafana
 
 ## More Details
