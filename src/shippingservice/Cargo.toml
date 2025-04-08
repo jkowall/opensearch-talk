@@ -18,7 +18,7 @@ tonic-health = "0.10.2"
 reqwest = { version = "0.11", default-features = false, features = ["json"] }
 prost = "0.12"
 prost-types = "0.12"
-tokio = { version = "1.33", features = ["macros", "rt-multi-thread"] }
+tokio = { version = "1.38", features = ["macros", "rt-multi-thread"] }
 opentelemetry = { version = "0.20", features = ["rt-tokio", "trace"] }
 opentelemetry-semantic-conventions = "0.12.0"
 opentelemetry_api = { version = "0.20" }
